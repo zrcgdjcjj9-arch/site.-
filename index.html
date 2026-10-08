@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тихий вечер — детективные дела</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f2ee;--pn:#fff;--bd:#d9d5cc;--tx:#1b1f24;--mu:#566069;--ac:#f2b84b;--ax:#8a5a00;--ok:#1f7a45;--er:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151a;--pn:#1b2028;--bd:#2a313b;--tx:#e9e6df;--mu:#9aa3ad;--ax:#f2b84b;--ok:#5fcf8f;--er:#ff8a80}}
+:root[data-theme="dark"]{--bg:#12151a;--pn:#1b2028;--bd:#2a313b;--tx:#e9e6df;--mu:#9aa3ad;--ax:#f2b84b;--ok:#5fcf8f;--er:#ff8a80}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Onest,sans-serif;font-size:17px;line-height:1.5}
+#app{max-width:720px;margin:0 auto;padding:20px 20px 48px}
+h1,h2{font-family:Unbounded,sans-serif;line-height:1.15;margin:0 0 12px}
+h1{font-size:clamp(28px,7vw,40px)}h2{font-size:22px}
+p{margin:0 0 12px}
+.mu{color:var(--mu)}
+.k{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:6px}
+.c{background:var(--pn);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.b{min-height:48px;padding:0 22px;border:0;border-radius:10px;background:var(--ac);color:#12151a;font-weight:600}
+.b:disabled{background:var(--bd);color:var(--mu);cursor:default}
+.g{display:block;width:100%;text-align:left;min-height:48px;padding:10px 14px;margin-bottom:8px;border:1px solid var(--bd);border-radius:10px;background:var(--pn)}
+.g[aria-pressed="true"]{border-color:var(--ac);box-shadow:inset 0 0 0 1px var(--ac)}
+.t{display:flex;gap:6px;margin:16px 0;overflow-x:auto}
+.t button{flex:1;min-height:44px;padding:0 12px;border:1px solid var(--bd);border-radius:10px;background:var(--pn);white-space:nowrap}
+.t button[aria-current="true"]{background:var(--ac);color:#12151a;border-color:var(--ac);font-weight:600}
+.l{padding:8px 0;border-bottom:1px solid var(--bd)}
+.l b{color:var(--mu);font-weight:500;font-size:14px}
+.cl{display:block;width:100%;text-align:left;padding:8px 10px;margin:4px 0;border:1px dashed var(--ax);border-radius:8px;background:transparent}
+.cl[aria-pressed="true"]{border-style:solid;background:color-mix(in srgb,var(--ac) 22%,transparent)}
+.ad{display:inline-block;padding:4px 10px;border-radius:99px;background:var(--ok);color:#fff;font-size:14px;margin-bottom:16px}
+.q{margin:10px 0;padding:10px 14px;border-radius:12px;background:var(--bg)}
+.q i{font-style:normal;color:var(--mu);font-size:14px;display:block}
+.w{color:var(--ok)}.e{color:var(--er)}
+a{color:var(--ax)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const CASES=[
+{id:"vitrina",free:1,t:"Пустая витрина",d:"Из частного музея пропали карманные часы 1912 года. Три часа до приезда страховщика.",
+intro:"Утро. Из зала №2 исчезли часы стоимостью в несколько миллионов. Замок витрины цел. Смотритель Игорь прислал вам рабочие материалы: переписки, журнал камер и полис. Нажимайте на выделенные строки, чтобы добавить улики в дело.",
+S:[["Чат смотрителя",[["06:52","Игорь","Витрина открыта, замок цел. Ничего не трогал."],["06:53","Мила","Ключ от витрины есть только у меня и у Фёдора Аркадьевича.","k1"],["06:55","Игорь","Мила, ты вчера ушла в шесть, да?"],["06:55","Мила","Да. Была дома, с температурой."]]],
+["Чат Фёдора и Павла",[["вчера 19:10","Фёдор","Копия часов готова? Нужна к утру.","k2"],["вчера 19:12","Павел","Почти. Но зачем копия, если оригинал в витрине?"],["вчера 19:13","Фёдор","Для выставки в другом городе. Не обсуждай это."]]],
+["Журнал камер",[["20:02","Вход","Фёдор Аркадьевич выходит и садится в машину."],["23:40","Вход","Стажёр Саша выходит с рюкзаком.","k3"],["01:14","Служебный коридор","Фёдор Аркадьевич входит со своим ключом.","k4"],["01:41","Служебный коридор","Фёдор Аркадьевич уходит с узким кейсом."]]],
+["Страховой полис",[["док","","Страховая сумма на часы: 4 000 000 ₽. Повышена с 900 000 ₽ девять дней назад.","k5"],["док","","Выплата производится, если следов взлома не найдено."]]]],
+C:{k1:"Витрину открыли ключом: он есть только у Милы и владельца.",k2:"Владелец заказал у реставратора точную копию часов.",k3:"Стажёр Саша ушёл в 23:40 и в зал №2 не заходил.",k4:"В 01:14 владелец вернулся в музей, хотя говорил, что ушёл в 20:00.",k5:"За девять дней до кражи страховая сумма выросла более чем в четыре раза."},
+P:[["Фёдор Аркадьевич","владелец музея",[["Где вы были ночью?","Ушёл в восемь вечера и спал дома."],["Зачем повышали страховку?","Рынок вырос. Обычная осторожность."]],{k4:"Ладно, заезжал за бумагами. Часов не трогал.",k5:"Это бухгалтерия, а не улика.",k2:"Копия нужна для выставки. Это законно."}],
+["Мила","хранитель коллекции",[["Где вы были?","Дома, болела."],["У кого ещё есть ключ?","Только у Фёдора Аркадьевича."]],{k1:"Да, поэтому первой подозревают меня. Но я была дома."}],
+["Павел","реставратор",[["Что вы делали вчера?","Работал в мастерской допоздна."],["Что за копия?","Обычный заказ владельца."]],{k2:"Фёдор Аркадьевич просил сделать копию в обход бухгалтерии. Больше ничего не знаю."}],
+["Саша","стажёр",[["Почему задержались?","Готовил экскурсию."],["Кого-то видели?","Нет, я ушёл без двадцати двенадцать."]],{k3:"Вот, камера подтвердила. В зал №2 я не заходил."}]],
+who:0,key:["k1","k2","k4","k5"],M:["Страховая выплата","Месть Миле","Долг коллекционеру"],m:0,
+win:"Фёдор Аркадьевич вернулся ночью своим ключом, вынес оригинал и оставил копию. Так не осталось следов взлома, а выплата по завышенному полису покрыла бы его долги."},
+{id:"kvartal",t:"Конец квартала",d:"Черновик годового отчёта утёк конкуренту за час до публикации. Кто отправил файл?",
+intro:"Файл «Отчёт_черновик» ушёл на почту конкурента в 21:07 с рабочего аккаунта Дианы. Но Диана уверяет, что была не в городе. Перед вами журнал доступа, документы, запись камеры и переписки.",
+S:[["Журнал доступа",[["21:02","Турникет","Вход в офис по карте Дианы Ровной.","k1"],["21:07","Сервер","Файл «Отчёт_черновик» отправлен с аккаунта Дианы."]]],
+["Документы",[["док","","Посадочный талон: Диана Ровная, вылет в Казань в 18:40.","k2"],["док","","Карта доступа Дианы хранилась в ящике стола."]]],
+["Камера на входе",[["21:01","Вход","В офис входит человек в красной куртке и прикладывает карту к турникету.","k3"]]],
+["Переписки",[["пт 16:20","Олег","Кирилл, новая красная куртка? Красиво.","k4"],["чт 22:10","Кирилл","Если отчёт будет у вас до публикации, оффер подтверждаем. Жду ответа.","k5"]]]],
+C:{k1:"В 21:02 в офис вошли по карте Дианы.",k2:"В это время Диана была в Казани: у неё билет на самолёт.",k3:"Карту приложил человек в красной куртке.",k4:"Красная куртка есть у Кирилла.",k5:"Кирилл обсуждал с конкурентом оффер в обмен на отчёт."},
+P:[["Кирилл","менеджер",[["Где вы были в девять?","Дома, смотрел сериал."],["Знакомы с «Вектором»?","Нет."]],{k5:"Это старый знакомый. Просто болтали.",k4:"Куртка — не преступление."}],
+["Диана","финансист",[["Где вы были?","В самолёте до Казани. Билет у меня."],["Кому давали карту?","Никому. Она лежала в ящике."]],{k2:"Вот именно. Я физически не могла отправить файл.",k1:"Значит, картой воспользовался кто-то другой."}],
+["Олег","директор",[["Что с отчётом?","Это катастрофа для компании."],["Кого подозреваете?","Никого. Все свои."]],{k5:"Не думал, что дойдёт до такого."}]],
+who:0,key:["k1","k2","k3","k4","k5"],M:["Оффер от конкурента","Обида на Диану","Месть директору"],m:0,
+win:"Кирилл взял карту Дианы из ящика, пока она летела, вошёл в офис в красной куртке и отправил файл с её аккаунта. Взамен конкурент обещал ему место."}
+];
+let admin=false,cur=null,tab="s",src=null,per=null,sel={},P={};
+try{P=JSON.parse(localStorage.getItem("tv")||"{}")}catch(e){}
+const A=document.getElementById("app");
+const save=()=>{try{localStorage.setItem("tv",JSON.stringify(P))}catch(e){}};
+const pr=c=>P[c.id]||(P[c.id]={cl:[],lg:{},r:null});
+function home(){
+A.innerHTML=`<h1>Тихий вечер</h1><p class="mu">Детективные дела: читаете чужие переписки, смотрите камеры, допрашиваете и называете виновного.</p>`+
+(admin?`<div class="ad">Режим администратора: все дела открыты бесплатно</div>`:"")+
+CASES.map((c,i)=>`<div class="c"><div class="k">${c.free?"Бесплатно":"Платное дело"}</div><h2>${c.t}</h2><p>${c.d}</p>`+
+(c.free||admin?`<button class="b" data-a="open" data-i="${i}">${pr(c).cl.length?"Продолжить":"Играть"}</button>`:`<button class="b" disabled>Оплата пока не подключена</button>`)+`</div>`).join("")+
+`<p class="mu" style="font-size:14px">Все персонажи и события вымышлены.</p>`;
+}
+function view(){
+if(cur==null)return home();
+const c=CASES[cur],p=pr(c);
+let h=`<button class="g" style="width:auto" data-a="home">← К делам</button><h1>${c.t}</h1><div class="t">`+
+[["s","Материалы"],["w","Допросы"],["b","Доска ("+p.cl.length+")"],["v","Вердикт"]].map(([k,n])=>`<button data-a="tab" data-v="${k}" aria-current="${tab==k}">${n}</button>`).join("")+`</div>`;
+if(tab=="s"){
+ if(src==null)h+=`<p>${c.intro}</p>`+c.S.map((s,i)=>`<button class="g" data-a="src" data-i="${i}">${s[0]}</button>`).join("");
+ else{const s=c.S[src];h+=`<button class="g" style="width:auto" data-a="src" data-i="">← Все материалы</button><h2>${s[0]}</h2>`+s[1].map(l=>{const t=`<b>${l[0]} ${l[1]}</b><br>${l[2]}`;return l[3]?`<button class="cl" data-a="take" data-k="${l[3]}" aria-pressed="${p.cl.includes(l[3])}">${t}${p.cl.includes(l[3])?" ✓ в деле":""}</button>`:`<div class="l">${t}</div>`}).join("")}
+}
+if(tab=="w"){
+ if(per==null)h+=c.P.map((x,i)=>`<button class="g" data-a="per" data-i="${i}"><b>${x[0]}</b><br><span class="mu">${x[1]}</span></button>`).join("");
+ else{const x=c.P[per],lg=p.lg[per]||[];
+  h+=`<button class="g" style="width:auto" data-a="per" data-i="">← Все люди</button><h2>${x[0]}</h2><div class="k">Задать вопрос</div>`+
+  x[2].map((q,j)=>`<button class="g" data-a="ask" data-j="${j}">${q[0]}</button>`).join("")+
+  `<div class="k" style="margin-top:16px">Предъявить улику</div>`+(p.cl.length?p.cl.map(k=>`<button class="g" data-a="show" data-k="${k}">${c.C[k]}</button>`).join(""):`<p class="mu">Улик пока нет. Найдите их в материалах.</p>`)+
+  lg.map(q=>`<div class="q"><i>${q[0]}</i>${q[1]}</div>`).join("")}
+}
+if(tab=="b")h+=p.cl.length?p.cl.map(k=>`<div class="c">${c.C[k]}</div>`).join(""):`<p class="mu">Доска пуста. Откройте материалы и нажмите на выделенные строки.</p>`;
+if(tab=="v"){
+ h+=`<div class="k">Кто виновен?</div>`+c.P.map((x,i)=>`<button class="g" data-a="pick" data-n="w" data-i="${i}" aria-pressed="${sel.w===i}">${x[0]}, ${x[1]}</button>`).join("")+
+ `<div class="k" style="margin-top:16px">Зачем?</div>`+c.M.map((m,i)=>`<button class="g" data-a="pick" data-n="m" data-i="${i}" aria-pressed="${sel.m===i}">${m}</button>`).join("")+
+ `<button class="b" data-a="end" ${sel.w==null||sel.m==null?"disabled":""} style="margin-top:8px">Назвать виновного</button>`;
+ if(p.r){const n=c.key.filter(k=>p.cl.includes(k)).length;
+  h+=p.r=="win"?`<div class="c w" style="margin-top:16px"><h2>Дело раскрыто</h2><p>${c.win}</p><p>Ключевых улик собрано: ${n} из ${c.key.length}.</p></div>`:
+  `<div class="c e" style="margin-top:16px"><h2>Не сходится</h2><p>${p.r=="who"?"У этого человека есть объяснения. Вернитесь к уликам и допросам.":"Виновный назван верно, но мотив другой."}</p></div>`}
+}
+A.innerHTML=h;
+}
+A.addEventListener("click",e=>{
+const t=e.target.closest("[data-a]");if(!t)return;
+const d=t.dataset,c=cur==null?null:CASES[cur],p=c&&pr(c);
+switch(d.a){
+case"open":cur=+d.i;tab="s";src=null;per=null;sel={};break;
+case"home":cur=null;break;
+case"tab":tab=d.v;break;
+case"src":src=d.i===""?null:+d.i;break;
+case"per":per=d.i===""?null:+d.i;break;
+case"take":p.cl=p.cl.includes(d.k)?p.cl.filter(k=>k!=d.k):p.cl.concat(d.k);save();break;
+case"ask":{const q=c.P[per][2][+d.j],l=p.lg[per]||(p.lg[per]=[]);if(!l.some(z=>z[0]==q[0]))l.push([q[0],q[1]]);save();break}
+case"show":{const l=p.lg[per]||(p.lg[per]=[]),a=c.P[per][3][d.k]||"Этим вы меня не поймаете.";if(!l.some(z=>z[0]=="Улика: "+c.C[d.k]))l.push(["Улика: "+c.C[d.k],a]);save();break}
+case"pick":sel[d.n]=+d.i;break;
+case"end":p.r=sel.w!==c.who?"who":sel.m!==c.m?"m":"win";save();break;
+}
+view();
+});
+view();
+if(location.hash=="#admin"){admin=true;view()}
+try{if(window.claude&&claude.use)claude.use("user").then(u=>{if(u&&u.isOwner()){admin=true;view()}}).catch(()=>{})}catch(e){}
+</script>
+</body>
+</html>
